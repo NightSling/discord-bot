@@ -19,8 +19,6 @@ Discord Bot for GNOME Nepal Discord Server.
    - `applications.commands`
 6. Under **Bot Permissions**, select the permissions your bot needs (for now `Send Messages`, `Read Message History`, etc.).
 7. Copy the generated URL and use it to invite the bot to your server.
-8. Under `Bot` Section, Enable `Message Content Intent` under `Privileged Gateway Intents`
-9. Save changes
 
 ---
 

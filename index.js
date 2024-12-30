@@ -9,7 +9,6 @@ const { CLIENT_ID, TOKEN, GUILD_ID } = require('./config.json');
 const client = new Client({
     intents: [
         GatewayIntentBits.GuildMessages,
-        GatewayIntentBits.MessageContent,
     ],
 });
 
@@ -42,7 +41,6 @@ client.once('ready', () => {
 async function HelloWorld(interaction) {
     await interaction.reply({
         content: `Hello World!!`,
-        ephemeral: true,
     });
     return;
 }
