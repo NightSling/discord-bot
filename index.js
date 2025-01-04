@@ -1,57 +1,58 @@
-const {
-    Client,
-    GatewayIntentBits,
-    REST,
-    Routes,
-} = require('discord.js');
-const { CLIENT_ID, TOKEN, GUILD_ID } = require('./config.json');
+// index.js
+const { Client, GatewayIntentBits, Collection } = require('discord.js');
+const { CLIENT_ID, TOKEN, GUILD_IDS } = require('./config.json');
+const fs = require('fs');
+const path = require('path');
 
-const client = new Client({
-    intents: [
-        GatewayIntentBits.GuildMessages,
-    ],
-});
+// Client Initialization
+const client = new Client({ intents: [GatewayIntentBits.GuildMessages] });
+client.commands = new Collection();
 
+// Load commands
+const commandFiles = fs.readdirSync(path.join(__dirname, 'commands')).filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+    const command = require(`./commands/${file}`);
+    client.commands.set(command.data.name, command);
+    console.log(`Loaded command: ${command.data.name}`);
+}
 
-const commands = [
-    {
-        name: 'hello-world',
-        description: 'Just echoes Hello World',
-    },
-];
+// Register commands
+const registerCommands = async () => {
+    const { REST, Routes } = require('discord.js');
+    const rest = new REST({ version: '10' }).setToken(TOKEN);
 
-const rest = new REST({ version: '10' }).setToken(TOKEN);
-
-(async () => {
     try {
         console.log('Registering slash commands...');
-        await rest.put(Routes.applicationGuildCommands(CLIENT_ID, GUILD_ID), {
-            body: commands,
-        });
+        const commands = client.commands.map(cmd => cmd.data.toJSON());
+        for (const guildId of GUILD_IDS) {
+            await rest.put(Routes.applicationGuildCommands(CLIENT_ID, guildId), { body: commands });
+            console.log(`Registered commands for guild: ${guildId}`);
+        }
         console.log('Slash commands registered successfully!');
     } catch (error) {
         console.error('Error registering slash commands:', error);
     }
-})();
+};
 
-client.once('ready', () => {
-    console.log(`Logged in as ${client.user.tag}`);
-});
+// Handle interactions
+client.on('interactionCreate', async interaction => {
+    if (!interaction.isCommand()) return;
 
-async function HelloWorld(interaction) {
-    await interaction.reply({
-        content: `Hello World!!`,
-    });
-    return;
-}
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
 
-client.on('interactionCreate', async (interaction) => {
-    if (interaction.isCommand()) {
-        const { commandName } = interaction;
-        if (commandName === 'hello-world') {
-            await HelloWorld(interaction);
-        }
+    try {
+        await command.execute(interaction);
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });
 
+// Execution
+(async () => {
+    await registerCommands();
+})();
+
+client.once('ready', () => console.log(`Logged in as ${client.user.tag}`));
 client.login(TOKEN);
