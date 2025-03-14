@@ -1,4 +1,4 @@
-const config = require("./config.json");
+const config = require('./config.json')
 
 module.exports = {
   CLIENT_ID: config.CLIENT_ID,
@@ -14,5 +14,5 @@ module.exports = {
   prefix: config.prefix,
   Member: config.Member,
   CONTRIBUTORS_URL:
-    "https://raw.githubusercontent.com/GNOME-Nepal/contributors/main/contributors.json",
-};
+    'https://raw.githubusercontent.com/GNOME-Nepal/contributors/main/contributors.json',
+}
