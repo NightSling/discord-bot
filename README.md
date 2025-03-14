@@ -1,15 +1,16 @@
-# GNOME Nepal Discord Bot 
+# GNOME Nepal Discord Bot
 
 Discord Bot for GNOME Nepal Discord Server.
 
 ## Prerequisites
+
 1. [Node.js](https://nodejs.org/) installed (v16.6.0 or later recommended).
 2. A Discord account with access to the [Discord Developer Portal](https://discord.com/developers/applications).
-
 
 ## Getting Started
 
 ### 1. Setting Up the Bot in Discord Developer Portal
+
 1. Log in to the [Discord Developer Portal](https://discord.com/developers/applications).
 2. Click on **New Application** to create a new bot application.
 3. Copy the **Client ID** from the application settings.
@@ -23,6 +24,7 @@ Discord Bot for GNOME Nepal Discord Server.
 ---
 
 ### 2. Setting Up the Project Locally
+
 1. Clone or download this repository.
 2. Install dependencies:
    ```bash
@@ -31,10 +33,10 @@ Discord Bot for GNOME Nepal Discord Server.
 3. Create a `config.json` file in the project root and add the following keys:
    ```json
    {
-    "CLIENT_ID": "your-client-id",
-    "TOKEN": "your-bot-token",
-    "GUILD_ID": "your-guild-id",
-    "MOD_ROLE_ID": "your-mod-role-id"
+     "CLIENT_ID": "your-client-id",
+     "TOKEN": "your-bot-token",
+     "GUILD_ID": "your-guild-id",
+     "MOD_ROLE_ID": "your-mod-role-id"
    }
    ```
    Replace `your-client-id`, `your-bot-token`, ` your-mod-role-id` and `your-guild-id` with the respective values from the Discord Developer Portal & Server.
@@ -42,19 +44,26 @@ Discord Bot for GNOME Nepal Discord Server.
 ---
 
 ### 3. Running the Bot
+
 Start the bot in development mode:
+
 ```bash
 npm run dev
 ```
 
 If successful, you will see the following logs:
+
 - `Registering slash commands...`
 - `Slash commands registered successfully!`
 - `Logged in as <Your Bot's Username>`
------
+
+---
+
 ### 4. Using the Commands
-In your Discord server, type ```/help``` to see the list of available slash commands.
-Use ```$sudo help``` to see the list of available prefix commands.
+
+In your Discord server, type `/help` to see the list of available slash commands.
+Use `$sudo help` to see the list of available prefix commands.
+
 ---
 
 ## Project Structure
@@ -68,10 +77,12 @@ Use ```$sudo help``` to see the list of available prefix commands.
 ---
 
 ## Dependencies
+
 - [discord.js](https://www.npmjs.com/package/discord.js)
 - [@discordjs/builders](https://www.npmjs.com/package/@discordjs/builders)
 
 Install dependencies using:
+
 ```bash
 npm install discord.js
 npm install discord.js @discordjs/builders
@@ -80,6 +91,7 @@ npm install discord.js @discordjs/builders
 ---
 
 ## Contributing
+
 Contributions are welcome! Feel free to fork the project and submit a pull request.
 This update includes the latest commands and project structure.
 
