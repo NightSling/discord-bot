@@ -2,4 +2,4 @@
 build
 coverage
 
-# Auto ignores node_modules
+# Follows .gitignore
