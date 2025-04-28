@@ -1,4 +1,4 @@
-name: Setup Configs and Build & Push Docker Image
+name: Build & Push Docker Image
 
 on:
   push:
@@ -46,12 +46,10 @@ jobs:
             -t ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:$SHORT_SHA \
             --push .
 
-  redeploy_on_caprover:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Call CapRover API to redeploy
-        run: |
-          curl -X POST "${{secrets.CAPROVER_API_URL}}" \
-            -H "captain-auth: ${{ secrets.CAPROVER_API_KEY }}" \
-            -H "Content-Type: application/json" \
-            -d '{}'
+      - name: Deploy Image to CapRover
+        uses: caprover/deploy-from-github@v1.1.2
+        with:
+          server: "${{ secrets.CAPROVER_SERVER }}"
+          app: "${{ secrets.APP_NAME }}"
+          token: "${{ secrets.CAPROVER_API_KEY }}"
+          image: "ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:${{ github.sha }}"
