@@ -1,11 +1,14 @@
 const {EmbedBuilder} = require('discord.js');
-const {fetchTopContributors} = require('../../api.js');
-const {EMBED_COLORS, calculateLatencies} = require('../../constants.js');
+const {fetchTopContributors} = require('../../Utils/cmds/api.js');
+const {EMBED_COLORS, calculateLatencies} = require('../../Utils/cmds/constants.js');
 const packageJson = require('../../package.json');
 
 module.exports = {
     name: 'ping',
-    description: 'Replies with bot\'s latency information.',
+    description: 'Replies with bot latency information.',
+    syntax: '$sudo ping',
+    usage: '$sudo ping',
+    emoji: '🏓',
     async execute(message) {
         try {
             // Send initial loading message

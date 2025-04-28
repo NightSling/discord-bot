@@ -1,12 +1,17 @@
 const {SlashCommandBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle} = require('discord.js');
 const axios = require('axios');
-const {CONTRIBUTORS_URL} = require('../../config-global');
-const {MESSAGE_COLLECTOR_TIMEOUT, remainingTime, createEmbed, EMBED_COLORS} = require('../../constants');
+const {CONTRIBUTORS_URL} = require('../../Utils/bot/config-global');
+const {MESSAGE_COLLECTOR_TIMEOUT, remainingTime, createEmbed, EMBED_COLORS} = require('../../Utils/cmds/constants.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('contributors')
         .setDescription('Displays the list of contributors from the GNOME Nepal GitHub organization.'),
+    name: 'contributors',
+    description: 'Displays the list of contributors from the GNOME Nepal GitHub organization.',
+    syntax: '/contributors',
+    usage: '/contributors',
+    emoji: '👥',
     async execute(interaction) {
         await interaction.deferReply();
 

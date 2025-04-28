@@ -1,5 +1,5 @@
 const axios = require('axios');
-const {GITHUB_TOKEN} = require('./config-global');
+const {GITHUB_TOKEN} = require('../../Utils/bot/config-global.js');
 
 const githubAPI = axios.create({
     baseURL: 'https://api.github.com',
@@ -10,7 +10,7 @@ const githubAPI = axios.create({
 });
 
 const memeApi = axios.create({
-    baseURL: 'https://meme-api.com'
+    baseURL: 'https://meme-api.herokuapp.com'
 });
 
 async function fetchTopContributors() {

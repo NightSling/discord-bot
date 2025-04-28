@@ -22,13 +22,15 @@ const {
     MEMBER_ROLE_ID,
     CONTRIBUTOR_ROLE_ID,
     MAINTAINER_ROLE_ID
-} = require('./config-global');
-const {ACTIVITY_ROTATION_INTERVAL} = require('./constants');
+} = require('./Utils/bot/config-global');
+const {ACTIVITY_ROTATION_INTERVAL} = require('./Utils/bot/constants');
 const fs = require('fs').promises;
+const fsSync = require('fs'); // Add synchronous fs for existsSync
 const path = require('path');
-const activities = require('./activities');
+const activities = require('./Utils/bot/activities');
 const Table = require('cli-table3');
-const {handleMention} = require('./Src/mention.js');
+const {handleMention} = require('./Src/Core/events/mentionHandler.js');
+const {loadEventHandlers} = require('./Event/event-loader.js');
 
 const client = new Client({
     intents: [
@@ -72,6 +74,7 @@ const prefixCommandMappings = [
 ];
 
 const loadCommands = async () => {
+    console.log("[INFO] Starting command loading process");
     console.log("--- Starting Command Loading ---");
 
     // Load from main Src directory (only for slash commands)
@@ -371,8 +374,12 @@ client.on('messageCreate', async message => {
 });
 
 // Set up activities
-client.on('ready', () => {
+client.on('ready', async () => {
     displayFinalTable(client.user.tag);
+
+    // Load custom event handlers
+    await loadEventHandlers(client);
+    console.log("[INFO] Custom event handlers initialized");
 
     if (activities.length) {
         let currentActivityIndex = 0;
@@ -386,15 +393,54 @@ client.on('ready', () => {
     }
 });
 
+// Add this to your bot's ready event handler
+client.once('ready', async () => {
+  console.log(`Logged in as ${client.user.tag}!`);
+  
+  // Check if bot was restarted via command
+  try {
+    const restartInfoPath = path.join(__dirname, 'restart-info.json');
+    
+    if (fsSync.existsSync(restartInfoPath)) {
+      const data = await fs.readFile(restartInfoPath, 'utf8');
+      const restartInfo = JSON.parse(data);
+      
+      // Only process restart notifications from the last 5 minutes
+      if (Date.now() - restartInfo.timestamp < 300000) {
+        const channel = await client.channels.fetch(restartInfo.channelId);
+        
+        if (channel) {
+          channel.send(`<@${restartInfo.userId}>, the bot has been restarted successfully!`);
+        }
+      }
+      
+      // Remove the restart info file
+      fsSync.unlinkSync(restartInfoPath);
+    }
+  } catch (error) {
+    console.error('Error handling restart notification:', error);
+  }
+  
+  // ...rest of your ready event code
+});
+
 // Main startup sequence
 (async () => {
     await loadCommands();
     await registerCommands();
 
     try {
+        console.log("[INFO] Connecting to Discord...");
         await client.login(TOKEN);
+        console.log("[OK] Bot successfully connected to Discord");
     } catch (error) {
         console.error("CRITICAL: Failed to connect to Discord:", error);
         process.exit(1);
     }
 })();
+
+// Initialize the logger's global capture
+const logger = require('./Utils/bot/logger');
+logger.initGlobalCapture();
+logger.log('Discord logging system initialized');
+

@@ -6,9 +6,9 @@
  */
 
 const os = require('os');
-const packageJson = require('./package.json'); // Corrected path
+const packageJson = require('../../package.json'); // Corrected path
 const {EmbedBuilder} = require('discord.js');
-const RANDOM_MEME = 'https://meme-api.com/gimme';
+const RANDOM_MEME = 'https://meme-api.herokuapp.com/gimme';
 
 function createContributors(data) {
     return data.map(contributor => ({
@@ -56,7 +56,7 @@ const calculateLatencies = (interaction) => {
 const MESSAGE_COLLECTOR_TIMEOUT = 100000;
 const remainingTime = MESSAGE_COLLECTOR_TIMEOUT / 1000;
 const cooldown = new Set();
-const COOLDOWN_TIME = 5000; // 5 seconds cooldown
+const COOLDOWN_TIME = 5000;
 
 const EMBED_COLORS = {
     DEFAULT: 0x62a0ea, // Blue
