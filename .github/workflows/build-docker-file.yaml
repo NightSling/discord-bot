@@ -52,4 +52,4 @@ jobs:
           server: '${{ secrets.CAPROVER_SERVER }}'
           app: '${{ secrets.APP_NAME }}'
           token: '${{ secrets.CAPROVER_API_KEY }}'
-          image: 'ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:${{ github.sha }}'
+          image: 'ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:latest'
