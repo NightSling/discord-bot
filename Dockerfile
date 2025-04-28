@@ -4,6 +4,7 @@ FROM node:18-alpine AS builder
 WORKDIR /app
 COPY package*.json ./
 COPY . .
+RUN npm install
 
 FROM node:18-alpine
 WORKDIR /app
