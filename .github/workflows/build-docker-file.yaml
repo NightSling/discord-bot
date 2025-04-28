@@ -45,3 +45,13 @@ jobs:
             -t ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:latest \
             -t ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:$SHORT_SHA \
             --push .
+
+  redeploy_on_caprover:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call CapRover API to redeploy
+        run: |
+          curl -X POST "${{secrets.CAPROVER_API_URL}}" \
+            -H "captain-auth: ${{ secrets.CAPROVER_API_KEY }}" \
+            -H "Content-Type: application/json" \
+            -d '{}'
