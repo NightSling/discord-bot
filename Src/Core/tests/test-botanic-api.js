@@ -12,7 +12,9 @@ async function testBotanicZooApi() {
   } catch (error) {
     console.error('Error using getAnimal method:', error.message);
     console.log('Red Panda Info: {}');
-    console.log('Using fallback fact: "The red panda is a fascinating creature in the animal kingdom!"');
+    console.log(
+      'Using fallback fact: "The red panda is a fascinating creature in the animal kingdom!"',
+    );
   }
 
   // Try getAnimalOfTheDay method
@@ -23,7 +25,9 @@ async function testBotanicZooApi() {
   } catch (error) {
     console.error('Error using getAnimalOfTheDay method:', error.message);
     console.log('Animal of the Day: {}');
-    console.log('Using fallback animal of the day: "Today\'s featured animal is the lion, king of the jungle!"');
+    console.log(
+      'Using fallback animal of the day: "Today\'s featured animal is the lion, king of the jungle!"',
+    );
   }
 
   console.log('\nAPI testing completed!');

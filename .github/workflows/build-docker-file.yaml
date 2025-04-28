@@ -3,7 +3,7 @@ name: Build & Push Docker Image
 on:
   push:
     branches:
-      - main  # or adjust as needed
+      - main # or adjust as needed
   workflow_dispatch: # manual trigger
 
 jobs:
@@ -12,10 +12,10 @@ jobs:
 
     permissions:
       contents: read
-      packages: write  # needed to push to ghcr.io
+      packages: write # needed to push to ghcr.io
 
     env:
-      REPOSITORY_LC: gnome-nepal  # your GitHub org/user lowercase
+      REPOSITORY_LC: gnome-nepal # your GitHub org/user lowercase
 
     steps:
       - name: Checkout code
@@ -49,7 +49,7 @@ jobs:
       - name: Deploy Image to CapRover
         uses: caprover/deploy-from-github@v1.1.2
         with:
-          server: "${{ secrets.CAPROVER_SERVER }}"
-          app: "${{ secrets.APP_NAME }}"
-          token: "${{ secrets.CAPROVER_API_KEY }}"
-          image: "ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:${{ github.sha }}"
+          server: '${{ secrets.CAPROVER_SERVER }}'
+          app: '${{ secrets.APP_NAME }}'
+          token: '${{ secrets.CAPROVER_API_KEY }}'
+          image: 'ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:${{ github.sha }}'
