@@ -3,7 +3,7 @@ name: Build & Push Docker Image
 on:
   push:
     branches:
-      - main # or adjust as needed
+      - main  # or adjust as needed
   workflow_dispatch: # manual trigger
 
 jobs:
@@ -12,10 +12,10 @@ jobs:
 
     permissions:
       contents: read
-      packages: write # needed to push to ghcr.io
+      packages: write  # needed to push to ghcr.io
 
     env:
-      REPOSITORY_LC: gnome-nepal # your GitHub org/user lowercase
+      REPOSITORY_LC: gnome-nepal  # your GitHub org/user lowercase
 
     steps:
       - name: Checkout code
@@ -37,7 +37,6 @@ jobs:
           echo "${{ secrets.EVENTS_JSON }}" | base64 -d > Event/event.json
 
       - name: Build, Tag, and Push Docker Image
-        id: build_and_push  # Set an id to reference outputs
         run: |
           SHORT_SHA=$(echo "${GITHUB_SHA}" | cut -c1-7)
 
@@ -47,17 +46,10 @@ jobs:
             -t ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:$SHORT_SHA \
             --push .
 
-          echo "::set-output name=short_sha::$SHORT_SHA"  # Set the short SHA as an output
-
-  redeploy_on_caprover:
-    needs: setup-build-push  # Ensures redeployment happens after the build and push
-    runs-on: ubuntu-latest
-
-    steps:
       - name: Deploy Image to CapRover
         uses: caprover/deploy-from-github@v1.1.2
         with:
-          server: '${{ secrets.CAPROVER_SERVER }}'
-          app: '${{ secrets.APP_NAME }}'
-          token: '${{ secrets.CAPROVER_API_KEY }}'
-          image: 'ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:${{ needs.setup-build-push.outputs.short_sha }}
+          server: "${{ secrets.CAPROVER_SERVER }}"
+          app: "${{ secrets.APP_NAME }}"
+          token: "${{ secrets.CAPROVER_API_KEY }}"
+          image: "ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:latest"
