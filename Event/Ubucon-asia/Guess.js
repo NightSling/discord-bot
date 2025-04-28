@@ -36,11 +36,10 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
-// Configuration
 const eventConfig = require('../event.json');
 const MONITORED_CHANNEL_ID = eventConfig.Channel_id;
 const REACTION_EMOJI = '<:gnome:1342508917560971325>';
-const MASCOT = eventConfig.Mascot.toLowerCase(); // Convert to lowercase for case-insensitive comparison
+const MASCOT = eventConfig.Mascot.toLowerCase();
 
 // API URL for animal search
 // Using Wikipedia API instead of A-Z Animals due to 403 errors
@@ -288,7 +287,6 @@ async function containsAnimalKeyword(content) {
   const words = content.toLowerCase().split(/\s+/);
   const nonAnimalWords = [];
 
-  // Check for negative phrases that indicate it's NOT an animal
   const lowerContent = content.toLowerCase();
   const negativeIndicators = [
     'not an animal',
@@ -306,10 +304,8 @@ async function containsAnimalKeyword(content) {
     }
   }
 
-  // First, try the entire message as a potential multi-word animal
   if (content.length >= 3) {
     try {
-      // Check if the entire content is an animal
       const isAnimal = await searchAnimal(content.toLowerCase());
 
       if (isAnimal) {
@@ -319,23 +315,17 @@ async function containsAnimalKeyword(content) {
           nonAnimalWords: [],
         };
       }
-    } catch (error) {
-      // Error checking the entire content, continue with word-by-word check
-    }
+    } catch (error) {}
   }
 
-  // Try common multi-word animals (like "red panda")
-  // Generate all possible 2-word and 3-word combinations
   const wordCombinations = [];
 
-  // Add 2-word combinations
   for (let i = 0; i < words.length - 1; i++) {
     if (words[i].length >= 2 && words[i + 1].length >= 2) {
       wordCombinations.push(`${words[i]} ${words[i + 1]}`);
     }
   }
 
-  // Add 3-word combinations
   for (let i = 0; i < words.length - 2; i++) {
     if (
       words[i].length >= 2 &&
@@ -346,14 +336,11 @@ async function containsAnimalKeyword(content) {
     }
   }
 
-  // Check each multi-word combination
   for (const combination of wordCombinations) {
     try {
       const isAnimal = await searchAnimal(combination);
 
       if (isAnimal) {
-        // Found a multi-word animal
-        // Add all other words to nonAnimalWords
         const combinationWords = combination.split(/\s+/);
         const otherWords = words.filter((w) => !combinationWords.includes(w));
 
@@ -363,12 +350,9 @@ async function containsAnimalKeyword(content) {
           nonAnimalWords: otherWords.filter((w) => w.length >= 3), // Only include words with 3+ chars
         };
       }
-    } catch (error) {
-      // Error checking this combination, continue with next
-    }
+    } catch (error) {}
   }
 
-  // Try each word as a potential animal name
   for (const word of words) {
     if (word.length < 3) {
       nonAnimalWords.push(word);
@@ -376,12 +360,9 @@ async function containsAnimalKeyword(content) {
     }
 
     try {
-      // Try to search for the animal using our custom function
       const isAnimal = await searchAnimal(word);
 
-      // If it's an animal
       if (isAnimal) {
-        // Add all other words to nonAnimalWords
         nonAnimalWords.push(...words.filter((w) => w !== word));
         return {
           isAnimal: true,
@@ -515,7 +496,6 @@ async function handleMessage(message) {
     if (isAnimal && animalName) {
       const animalInfo = await getAnimalInfo(animalName);
 
-      // Send neutral user reply
       const userEmbed = createUserReplyEmbed(animalInfo);
       await message.reply({
         embeds: [userEmbed],
@@ -529,7 +509,6 @@ async function handleMessage(message) {
         ],
       });
 
-      // Keep colored logging
       const logChannel = message.guild.channels.cache.get(
         eventConfig.UbuconAsia2025,
       );
@@ -570,7 +549,6 @@ async function handleMessage(message) {
 
       await message.react(isCorrectGuess ? '✅' : REACTION_EMOJI);
     } else {
-      // Ensure prompt message is deleted after sending
       await message.delete();
       const reply = await message.channel.send({
         content: `${message.author}, Please include an animal name in your guess!`,
@@ -591,13 +569,10 @@ async function handleMessage(message) {
 function isCorrectMascotGuess(content) {
   const lowerContent = content.toLowerCase();
 
-  // Check if the content contains the exact mascot name
   if (lowerContent.includes(MASCOT)) {
     return true;
   }
 
-  // For multi-word mascots (like "red panda"), check if all words are present
-  // This helps catch cases where words are in a different order or separated
   if (MASCOT.includes(' ')) {
     const mascotWords = MASCOT.split(' ');
     return mascotWords.every((word) => lowerContent.includes(word));

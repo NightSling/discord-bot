@@ -61,7 +61,6 @@ client.maintainerCommands = new Collection(); // For '$packman' commands
 const allCommands = [];
 const registeredGuilds = [];
 
-// Define role-based prefix mappings (THIS IS WHERE PREFIXES ARE DEFINED)
 const prefixCommandMappings = [
   {
     prefix: 'sudo',
@@ -90,7 +89,6 @@ const loadCommands = async () => {
   console.log('[INFO] Starting command loading process');
   console.log('--- Starting Command Loading ---');
 
-  // Load from main Src directory (only for slash commands)
   const srcPath = path.join(__dirname, 'Src');
   try {
     const mainFiles = await fs.readdir(srcPath);
@@ -139,7 +137,6 @@ const loadCommands = async () => {
     console.log(`[INFO] Failed to read main Src directory: ${err.message}`);
   }
 
-  // Load from subdirectories (role-based commands and Slash-Commands)
   const categories = ['Member', 'Contributor', 'Maintainer', 'Slash-Commands'];
   for (const category of categories) {
     const categoryPath = path.join(__dirname, 'Src', category);
@@ -165,7 +162,6 @@ const loadCommands = async () => {
       try {
         const command = require(filePath);
         if (command.data) {
-          // Slash command
           client.slashCommands.set(command.data.name, command);
           allCommands.push({
             name: command.data.name,
@@ -175,7 +171,6 @@ const loadCommands = async () => {
             status: '✓',
           });
         } else if (command.name) {
-          // Role-based prefix command
           const mapping = prefixCommandMappings.find((m) => m.dir === category);
           if (mapping) {
             mapping.collection.set(command.name, command);
@@ -227,7 +222,6 @@ const loadCommands = async () => {
   console.log('--- Command Loading Finished ---');
 };
 
-// Register commands to guilds
 const registerCommands = async () => {
   const rest = new REST({ version: '10' }).setToken(TOKEN);
   const commands = client.slashCommands.map((cmd) => cmd.data.toJSON());
@@ -256,7 +250,6 @@ const registerCommands = async () => {
   console.log('--- Slash Command Registration Finished ---');
 };
 
-// Status display for console
 const displayFinalTable = (botTag) => {
   const commandTable = new Table({
     head: ['Title / Name', 'Type', 'User', 'Description', 'Status'],
@@ -311,7 +304,6 @@ const displayFinalTable = (botTag) => {
   console.log('Bot is ready to use! ✓ | LGTM 🚀 ');
 };
 
-// Handle slash commands
 client.on('interactionCreate', async (interaction) => {
   if (!interaction.isCommand()) return;
 
@@ -340,11 +332,9 @@ client.on('messageCreate', async (message) => {
   await handleMention(message, client);
 });
 
-// Handle role-based prefix commands only
 client.on('messageCreate', async (message) => {
   if (message.author.bot || !message.guild || !message.content) return;
 
-  // Check role-based prefixes
   for (const mapping of prefixCommandMappings) {
     const fullPrefix = mapping.prefix + ' ';
     if (message.content.startsWith(fullPrefix)) {
@@ -418,11 +408,9 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-// Set up activities
 client.on('ready', async () => {
   displayFinalTable(client.user.tag);
 
-  // Load custom event handlers
   await loadEventHandlers(client);
   console.log('[INFO] Custom event handlers initialized');
 
@@ -440,7 +428,6 @@ client.on('ready', async () => {
   }
 });
 
-// Add this to your bot's ready event handler
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
 
@@ -452,7 +439,6 @@ client.once('ready', async () => {
       const data = await fs.readFile(restartInfoPath, 'utf8');
       const restartInfo = JSON.parse(data);
 
-      // Only process restart notifications from the last 5 minutes
       if (Date.now() - restartInfo.timestamp < 300000) {
         const channel = await client.channels.fetch(restartInfo.channelId);
 
@@ -469,11 +455,8 @@ client.once('ready', async () => {
   } catch (error) {
     console.error('Error handling restart notification:', error);
   }
-
-  // ...rest of your ready event code
 });
 
-// Main startup sequence
 (async () => {
   await loadCommands();
   await registerCommands();
@@ -488,7 +471,6 @@ client.once('ready', async () => {
   }
 })();
 
-// Initialize the logger's global capture
 const logger = require('./Utils/bot/logger');
 logger.initGlobalCapture();
 logger.log('Discord logging system initialized');

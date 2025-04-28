@@ -7,7 +7,6 @@ const { WebhookClient, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
 
-// Load config
 let config = {};
 try {
   const configPath = path.join(__dirname, '../../config.json');
@@ -17,7 +16,6 @@ try {
   console.error('Failed to load config for logger:', err);
 }
 
-// Store original console methods
 const originalConsole = {
   log: console.log,
   warn: console.warn,
@@ -26,7 +24,6 @@ const originalConsole = {
   debug: console.debug,
 };
 
-// Initialize webhook client if URL is available
 let webhook = null;
 try {
   if (config.Bot_DevLog_Webhook_URL) {
@@ -36,13 +33,11 @@ try {
   originalConsole.error('Failed to initialize Discord webhook:', err);
 }
 
-// Buffer to collect logs before sending
 const logBuffer = {
   messages: [],
   lastSent: Date.now(),
 };
 
-// Store recent message hashes to prevent duplicates
 const recentMessageHashes = new Set();
 const MAX_RECENT_MESSAGES = 100;
 
@@ -54,14 +49,11 @@ const MAX_RECENT_MESSAGES = 100;
 function createMessageHash(msg) {
   if (typeof msg !== 'string') return '';
 
-  // Create a basic hash from the message content
-  // Focus on the core content by trimming and removing timestamps
   const cleanMsg = msg
     .replace(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z/g, '')
     .replace(/\x1B\[\d+m/g, '')
     .trim();
 
-  // For large messages, just use a portion to avoid expensive operations
   const hashContent =
     cleanMsg.length > 100
       ? cleanMsg.substring(0, 50) + cleanMsg.substring(cleanMsg.length - 50)
@@ -87,7 +79,6 @@ function cleanupMessageHashes() {
   }
 }
 
-// Set up periodic hash cleanup
 setInterval(cleanupMessageHashes, 60000);
 
 /**
@@ -122,7 +113,6 @@ function formatTableForDiscord(tableString) {
   }
 
   try {
-    // Extract meaningful data from the table and format as compact JSON/list
     const lines = tableString.split('\n');
     const relevantData = lines
       .filter(
@@ -187,13 +177,10 @@ async function processLogBuffer() {
         }
       }
 
-      // Add the last chunk if it has content
       if (currentChunk) chunks.push(currentChunk);
 
-      // Send each chunk
       for (const chunk of chunks) {
         if (chunk.length > 2000) {
-          // If still too large, break it down further or truncate
           const truncatedChunk =
             chunk.substring(0, 1950) + '\n... [content truncated]';
           await webhook.send({
@@ -237,7 +224,6 @@ function addToBuffer(level, message) {
     cleanMessage = message.replace(/\x1B\[\d+m/g, '');
   }
 
-  // Format the full log entry
   const logEntry = `[${timestamp}] [${level}] ${cleanMessage}`;
 
   // Check for duplicates
@@ -247,14 +233,12 @@ function addToBuffer(level, message) {
     return;
   }
 
-  // Add hash to recent set
   if (msgHash) {
     recentMessageHashes.add(msgHash);
   }
 
   logBuffer.messages.push(logEntry);
 
-  // Process immediately for errors
   if (level === 'ERROR') {
     processLogBuffer();
   }
@@ -270,7 +254,6 @@ async function sendEmbed(title, description, color = '#0099ff') {
   if (!webhook) return;
 
   try {
-    // Create a hash to check for duplicates
     const embedHash = createMessageHash(
       `${title}:${description.substring(0, 100)}`,
     );

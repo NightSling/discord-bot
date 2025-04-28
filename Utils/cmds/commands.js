@@ -8,7 +8,6 @@
 const fs = require('fs');
 const path = require('path');
 
-// Function to load commands from a directory
 const loadCommands = (dir) => {
   try {
     if (!fs.existsSync(dir)) {

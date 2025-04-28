@@ -17,7 +17,6 @@ module.exports = {
   usage: '$packman purge 10',
   emoji: '🧹',
   async execute(message, args) {
-    // Check if user has permission to manage messages
     if (
       !message.member.permissions.has(PermissionsBitField.Flags.ManageMessages)
     ) {

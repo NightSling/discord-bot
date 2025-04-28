@@ -43,7 +43,6 @@ const createHelpEmbed = (member) => {
       text: 'Use the command shown below each category to see details',
     });
 
-  // Add role-based commands
   Object.entries(ROLE_COMMANDS).forEach(([roleId, config]) => {
     if (member.roles.cache.has(roleId)) {
       embed.addFields({
@@ -54,7 +53,6 @@ const createHelpEmbed = (member) => {
     }
   });
 
-  // Add general commands
   embed.addFields({
     name: '🌍 General Commands',
     value: '`/help` - Basic bot functionality',

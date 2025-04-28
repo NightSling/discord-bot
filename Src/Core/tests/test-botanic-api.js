@@ -3,7 +3,6 @@ const botanicZooApi = require('botanic-zoo-api');
 async function testBotanicZooApi() {
   console.log('Testing Botanic Zoo API...');
 
-  // Try the getAnimal method with 'red panda' (URL encoded)
   console.log('Trying getAnimal method with "red panda"...');
   try {
     const encodedAnimal = encodeURIComponent('red panda');
@@ -17,7 +16,6 @@ async function testBotanicZooApi() {
     );
   }
 
-  // Try getAnimalOfTheDay method
   console.log('\nTrying getAnimalOfTheDay method...');
   try {
     const animalOfTheDay = await botanicZooApi.getAnimalOfTheDay();
@@ -33,5 +31,4 @@ async function testBotanicZooApi() {
   console.log('\nAPI testing completed!');
 }
 
-// Run the test function
 testBotanicZooApi();

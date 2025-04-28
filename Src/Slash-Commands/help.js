@@ -13,7 +13,6 @@ module.exports = {
   usage: '/help',
   emoji: '📚',
   async execute(interaction) {
-    // Access the client object through the interaction
     const client = interaction.client;
     const slashCommands = client.slashCommands;
 

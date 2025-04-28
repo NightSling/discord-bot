@@ -25,7 +25,6 @@ module.exports = {
         return;
       }
 
-      // Create the button
       const row = new ActionRowBuilder().addComponents(
         new ButtonBuilder()
           .setCustomId('next_meme')
@@ -33,20 +32,16 @@ module.exports = {
           .setStyle(ButtonStyle.Primary),
       );
 
-      // Calculate initial remaining time in seconds
       let remainingTimeSeconds = Math.floor(BUTTON_TIMEOUT / 1000);
 
-      // Build the embed
       const embed = this.createMemeEmbed(data, remainingTimeSeconds);
 
-      // Send the message with the button and timer
       const sentMessage = await message.reply({
         content: `⏳ Time remaining: ${remainingTimeSeconds} seconds`,
         embeds: [embed],
         components: [row],
       });
 
-      // Update timer every second
       const interval = setInterval(() => {
         remainingTimeSeconds--;
         if (remainingTimeSeconds >= 0) {
@@ -58,7 +53,6 @@ module.exports = {
         }
       }, 1000);
 
-      // Create a collector for the button
       const filter = (interaction) =>
         interaction.customId === 'next_meme' &&
         interaction.user.id === message.author.id;
@@ -72,14 +66,11 @@ module.exports = {
         await interaction.deferUpdate(); // Acknowledge the interaction
 
         try {
-          // Fetch new meme
           const newResponse = await memeApi.get('/gimme');
           const newData = newResponse.data;
 
-          // Update the embed
           const newEmbed = this.createMemeEmbed(newData, remainingTimeSeconds);
 
-          // Edit the message with the new embed
           await interaction.editReply({
             embeds: [newEmbed],
             components: [row],
@@ -94,10 +85,8 @@ module.exports = {
       });
 
       collector.on('end', () => {
-        // Stop the timer
         clearInterval(interval);
 
-        // Disable the button
         const disabledRow = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setCustomId('next_meme')

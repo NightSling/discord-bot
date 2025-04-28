@@ -13,10 +13,8 @@ const path = require('path');
  */
 async function loadAnimalKeywordSystem(client) {
   try {
-    // Load event configuration
     const eventConfig = require('./event.json');
 
-    // Check if the event is enabled via Special_key
     if (eventConfig.Special_key !== 'Enable') {
       console.log(
         '[INFO] Animal Keyword Detection System is disabled. Set "Special_key": "Enable" in event.json to enable it.',
@@ -53,10 +51,7 @@ async function loadAnimalKeywordSystem(client) {
 async function loadEventHandlers(client) {
   console.log('[INFO] Loading custom event handlers...');
 
-  // Load the animal keyword detection system
   await loadAnimalKeywordSystem(client);
-
-  // Additional event handlers can be loaded here in the future
 
   console.log('[INFO] Custom event handlers loaded');
 }

@@ -8,7 +8,6 @@ module.exports = {
   usage: '$sudo help',
   emoji: '📚',
   execute(message) {
-    // Access the client object through the message
     const client = message.client;
     const contributorCommands = client.contributorCommands;
 

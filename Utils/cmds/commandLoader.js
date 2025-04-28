@@ -15,14 +15,12 @@ const { Collection } = require('discord.js');
 async function loadCommands() {
   console.log('--- Starting Command Loading ---');
 
-  // Initialize collections
   const slashCommands = new Collection();
   const memberCommands = new Collection();
   const contributorCommands = new Collection();
   const maintainerCommands = new Collection();
   const allCommands = [];
 
-  // Load from main Src directory (only for slash commands)
   const srcPath = path.join(__dirname, '..', '..');
   try {
     const mainFiles = await fs.readdir(srcPath);
@@ -71,7 +69,6 @@ async function loadCommands() {
     console.log(`[INFO] Failed to read main Src directory: ${err.message}`);
   }
 
-  // Define role-based prefix mappings
   const prefixCommandMappings = [
     {
       prefix: 'sudo',
@@ -102,7 +99,6 @@ async function loadCommands() {
     },
   ];
 
-  // Load from subdirectories (role-based commands and Slash-Commands)
   const categories = ['Member', 'Contributor', 'Maintainer', 'Slash-Commands'];
   for (const category of categories) {
     const categoryPath = path.join(__dirname, '..', '..', category);
@@ -126,12 +122,10 @@ async function loadCommands() {
       if (!file.endsWith('.js')) continue;
       const filePath = path.join(categoryPath, file);
       try {
-        // Clear require cache to avoid circular dependencies
         delete require.cache[require.resolve(filePath)];
         const command = require(filePath);
 
         if (command.data) {
-          // Slash command
           slashCommands.set(command.data.name, command);
           allCommands.push({
             name: command.data.name,
@@ -141,7 +135,6 @@ async function loadCommands() {
             status: '✓',
           });
         } else if (command.name) {
-          // Role-based prefix command
           const mapping = prefixCommandMappings.find((m) => m.dir === category);
           if (mapping) {
             mapping.collection.set(command.name, command);

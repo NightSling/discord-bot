@@ -14,20 +14,16 @@ module.exports = {
   emoji: '🏓',
   async execute(message) {
     try {
-      // Send initial loading message
       const sentMessage = await message.reply('Calculating bot latency...');
 
-      // Get latency data
       const latencies = calculateLatencies(message);
 
-      // Fetch contributor data
       const { topContributors, totalContributors } =
         await fetchTopContributors();
       const topContributorsList = topContributors
         .map((contributor) => contributor.login)
         .join(', ');
 
-      // Build embed fields
       const fields = [
         { name: '🖥️ Shard Latency', value: `${latencies.shardLatency}ms` },
         { name: '⚙️ Node Latency', value: `${latencies.nodeLatency}ms` },
@@ -49,7 +45,6 @@ module.exports = {
         },
       ];
 
-      // Create embed
       const embed = new EmbedBuilder()
         .setColor(EMBED_COLORS.DEFAULT)
         .setTitle('📊 Bot Latency Information and Contributors')
@@ -59,7 +54,6 @@ module.exports = {
           text: `Data fetched from Hosting Environment & GitHub API | Top 3 Contributors: ${topContributorsList}`,
         });
 
-      // Edit initial message with results
       await sentMessage.edit({ content: ' ', embeds: [embed] });
     } catch (error) {
       console.error(

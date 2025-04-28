@@ -50,11 +50,9 @@ async function fetchRandomMeme() {
 
 async function fetchGnomeNepalData() {
   try {
-    // Get organization data
     const orgResponse = await githubAPI.get('/orgs/GNOME-Nepal');
     const org = orgResponse.data;
 
-    // Get repositories
     const reposResponse = await githubAPI.get('/orgs/GNOME-Nepal/repos');
     const repos = reposResponse.data;
 

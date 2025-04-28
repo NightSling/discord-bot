@@ -2,7 +2,6 @@ const botanicZooApi = require('botanic-zoo-api');
 const Table = require('cli-table3');
 const animalSystem = require('../../../Event/Ubucon-asia/Guess.js');
 
-// Sample animal names to test
 const testAnimals = [
   'dog',
   'cat',
@@ -15,7 +14,6 @@ const testAnimals = [
   'javascript',
 ];
 
-// Results array for the table
 const results = [];
 
 /**
@@ -26,19 +24,16 @@ async function testAnimalDetection(text) {
   console.log(`Testing: "${text}"`);
 
   try {
-    // Use the containsAnimalKeyword function from Guess.js
     const { isAnimal, animalName } =
       await animalSystem.containsAnimalKeyword(text);
 
     if (isAnimal) {
       console.log(`✓ Detected animal: ${animalName}`);
 
-      // Try to get animal facts
       try {
         const encodedAnimal = encodeURIComponent(animalName);
         const animalInfo = await botanicZooApi.getAnimal(encodedAnimal);
 
-        // Add to results
         results.push({
           text: text,
           result: '✓',
@@ -47,7 +42,6 @@ async function testAnimalDetection(text) {
           notes: 'Animal detected',
         });
       } catch (error) {
-        // API error but animal was detected
         results.push({
           text: text,
           result: '✓',
@@ -59,7 +53,6 @@ async function testAnimalDetection(text) {
     } else {
       console.log(`✗ No animal detected`);
 
-      // Add to results
       results.push({
         text: text,
         result: '✗',
@@ -71,7 +64,6 @@ async function testAnimalDetection(text) {
   } catch (error) {
     console.error(`Error testing "${text}":`, error.message);
 
-    // Add error to results
     results.push({
       text: text,
       result: '!',
@@ -129,14 +121,11 @@ async function runTests() {
     return;
   }
 
-  // Test each sample text
   for (const text of testAnimals) {
     await testAnimalDetection(text);
   }
 
-  // Display results
   displayResults();
 }
 
-// Run the tests
 runTests();

@@ -26,12 +26,10 @@ module.exports = {
   usage: '/report',
   emoji: '📝',
   async execute(interaction) {
-    // Create the modal
     const modal = new ModalBuilder()
       .setCustomId('reportModal')
       .setTitle('Submit a Report');
 
-    // Create text input components
     const whatInput = new TextInputBuilder()
       .setCustomId('whatReport')
       .setLabel('What are you reporting?')
@@ -55,14 +53,12 @@ module.exports = {
       .setRequired(true)
       .setPlaceholder('DD/MM/YYYY or approximate time');
 
-    // Add action rows with text inputs to modal
     modal.addComponents(
       new ActionRowBuilder().addComponents(whatInput),
       new ActionRowBuilder().addComponents(whyInput),
       new ActionRowBuilder().addComponents(whenInput),
     );
 
-    // Show the modal
     await interaction.showModal(modal);
 
     try {
@@ -71,18 +67,15 @@ module.exports = {
         time: 300000,
       });
 
-      // Get report data
       const [whatReported, whyReported, whenReported] = [
         'whatReport',
         'whyReport',
         'whenReport',
       ].map((field) => modalInteraction.fields.getTextInputValue(field));
 
-      // Initialize evidence storage
       const evidence = [];
       const cleanupQueue = [];
 
-      // Create evidence collector
       const evidenceCollector = modalInteraction.channel.createMessageCollector(
         {
           filter: (m) => m.author.id === interaction.user.id,
@@ -91,7 +84,6 @@ module.exports = {
         },
       );
 
-      // Send evidence instructions
       const evidenceEmbed = new EmbedBuilder()
         .setColor(EMBED_COLORS.WARNING)
         .setTitle('📁 Evidence Submission')
@@ -110,7 +102,6 @@ module.exports = {
       });
       if (instructions) cleanupQueue.push(instructions);
 
-      // Process collected evidence
       evidenceCollector.on('collect', async (m) => {
         try {
           if (m.content.toLowerCase() === 'cancel') {
@@ -123,9 +114,7 @@ module.exports = {
             return;
           }
 
-          // Process attachments
           for (const attachment of m.attachments.values()) {
-            // Validate attachment
             if (attachment.size > 8_388_608) {
               await sendTemporaryMessage(
                 modalInteraction,
@@ -134,7 +123,6 @@ module.exports = {
               continue;
             }
 
-            // Download and store attachment
             const response = await axios.get(attachment.url, {
               responseType: 'arraybuffer',
             });
@@ -152,7 +140,6 @@ module.exports = {
         }
       });
 
-      // Handle collector completion
       evidenceCollector.on('end', async (collected, reason) => {
         try {
           if (reason === 'userCancelled' || reason === 'time') {
@@ -160,7 +147,6 @@ module.exports = {
             return;
           }
 
-          // Create report embed
           const caseId = Math.random().toString(36).slice(2, 8).toUpperCase();
           const reportEmbed = new EmbedBuilder()
             .setColor(EMBED_COLORS.WARNING)
@@ -183,12 +169,10 @@ module.exports = {
             )
             .setFooter({ text: `Reporter ID: ${interaction.user.id}` });
 
-          // Prepare attachments
           const attachments = evidence.map(
             (e) => new AttachmentBuilder(e.data, { name: e.name }),
           );
 
-          // Send to webhook
           if (config.REPORT_WEBHOOK_URL) {
             const webhook = new WebhookClient({
               url: config.REPORT_WEBHOOK_URL,
@@ -202,7 +186,6 @@ module.exports = {
             });
           }
 
-          // Send confirmation
           const confirmation = new EmbedBuilder()
             .setColor(EMBED_COLORS.SUCCESS)
             .setDescription(
@@ -217,7 +200,6 @@ module.exports = {
             embeds: [confirmation],
           });
 
-          // Cleanup non-attachment messages after delay
           cleanupMessages(cleanupQueue);
         } catch (error) {
           console.error('Report submission error:', error);

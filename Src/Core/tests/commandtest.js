@@ -5,8 +5,6 @@ const Table = require('cli-table3');
 const { Collection } = require('discord.js');
 const commands = require('../../../Utils/cmds/commands.js');
 
-// Command Collections
-const slashCommands = new Collection();
 const memberCommands = new Collection();
 const contributorCommands = new Collection();
 const maintainerCommands = new Collection();
@@ -14,7 +12,6 @@ const maintainerCommands = new Collection();
 const allCommands = [];
 const registeredGuilds = [];
 
-// Define role-based prefix mappings
 const prefixCommandMappings = [
   {
     prefix: 'sudo',
@@ -96,7 +93,6 @@ const loadCommands = async () => {
     console.log(`[INFO] Failed to read main Src directory: ${err.message}`);
   }
 
-  // Load from subdirectories (role-based commands and Slash-Commands)
   const categories = ['Member', 'Contributor', 'Maintainer', 'Slash-Commands'];
   for (const category of categories) {
     const categoryPath = path.join(__dirname, '..', 'Src', category);
@@ -191,7 +187,6 @@ const loadCommands = async () => {
   };
 };
 
-// Display command status in a table
 const displayFinalTable = (botTag, guilds) => {
   const commandTable = new Table({
     head: ['Title / Name', 'Type', 'User', 'Description', 'Status'],
@@ -249,7 +244,6 @@ const displayFinalTable = (botTag, guilds) => {
   console.log('Bot is ready to use! ✓ | LGTM 🚀 ');
 };
 
-// Add guild to registered guilds list
 const addRegisteredGuild = (guildId, status) => {
   registeredGuilds.push({ id: guildId, status });
 };

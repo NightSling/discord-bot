@@ -59,8 +59,6 @@ module.exports = {
         },
       ];
 
-      // Social links are now imported from utils/social-links.js
-
       const row = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
           .setCustomId('select-social')
@@ -70,7 +68,6 @@ module.exports = {
 
       let remainingTimeLocal = remainingTime;
 
-      // Use fetchReply: true to get the message object
       const message = await interaction.reply({
         content: `Time remaining: ${remainingTimeLocal} seconds`,
         embeds: [embed],
@@ -108,7 +105,6 @@ module.exports = {
         );
         const link = socialLinks[selected];
 
-        // Create a button that links directly to the website
         const linkButton = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setLabel(`Visit ${selectedOption.label}`)
