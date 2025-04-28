@@ -34,7 +34,7 @@ jobs:
       - name: Create config.json and Event/event.json from secrets
         run: |
           echo "${{ secrets.CONFIG_JSON }}" | base64 -d > config.json
-          echo "${{ secrets.EVENTS_JSON }}" | base64 -d > Events/event.json
+          echo "${{ secrets.EVENTS_JSON }}" | base64 -d > Event/event.json
 
       - name: Build, Tag, and Push Docker Image
         run: |
