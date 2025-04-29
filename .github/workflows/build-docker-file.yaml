@@ -52,6 +52,9 @@ jobs:
   redeploy_on_caprover:
     needs: setup-build-push  # Ensures redeployment happens after the build and push
     runs-on: ubuntu-latest
+    
+    env:
+      REPOSITORY_LC: gnome-nepal  # your GitHub org/user lowercase
 
     steps:
       - name: Deploy Image to CapRover
@@ -60,4 +63,4 @@ jobs:
           server: "${{ secrets.CAPROVER_SERVER }}"
           app: "${{ secrets.APP_NAME }}"
           token: "${{ secrets.CAPROVER_API_KEY }}"
-          image: "ghcr.io/$REPOSITORY_LC/gnome-nepal-discord-bot:${{ needs.setup-build-push.outputs.short_sha }}"
+          image: "ghcr.io/${{ env.REPOSITORY_LC }}/gnome-nepal-discord-bot:${{ needs.setup-build-push.outputs.short_sha }}"
