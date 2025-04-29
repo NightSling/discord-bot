@@ -56,14 +56,10 @@ jobs:
       REPOSITORY_LC: gnome-nepal  # your GitHub org/user lowercase
   
     steps:
-      - name: Extract short SHA
-        id: vars
-        run: echo "short_sha=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-  
       - name: Deploy Image to CapRover
         uses: caprover/deploy-from-github@v1.1.2
         with:
           server: "${{ secrets.CAPROVER_SERVER }}"
           app: "${{ secrets.APP_NAME }}"
           token: "${{ secrets.CAPROVER_API_KEY }}"
-          image: "ghcr.io/${{ env.REPOSITORY_LC }}/gnome-nepal-discord-bot:${{ steps.vars.outputs.short_sha }}"
+          image: "ghcr.io/${{ env.REPOSITORY_LC }}/gnome-nepal-discord-bot:latest"
