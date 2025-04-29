@@ -474,3 +474,14 @@ client.once('ready', async () => {
 const logger = require('./Utils/bot/logger');
 logger.initGlobalCapture();
 logger.log('Discord logging system initialized');
+
+// Handles unhandled promise rejections and uncaught exceptions.
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error('unhandledRejection caught: ' + reason);
+  console.error(reason, promise);
+});
+
+process.on('uncaughtException', (error) => {
+  logger.error('uncaughtException caught: ' + error);
+  console.error(error);
+});

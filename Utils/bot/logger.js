@@ -6,6 +6,7 @@
 const { WebhookClient, EmbedBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
+const zlib = require('zlib');
 
 let config = {};
 try {
@@ -16,6 +17,11 @@ try {
   console.error('Failed to load config for logger:', err);
 }
 
+// Store original console methods
+const logFileName = `log_${new Date().toISOString().replace(/[:.]/g, '-')}.log`;
+const logFilePath = path.join(logsDir, logFileName);
+
+// Store original console methods
 const originalConsole = {
   log: console.log,
   warn: console.warn,
@@ -31,6 +37,11 @@ try {
   }
 } catch (err) {
   originalConsole.error('Failed to initialize Discord webhook:', err);
+}
+
+// Function to write logs to a file
+function writeLogToFile(message) {
+  fs.appendFileSync(logFilePath, message + '\n', 'utf8');
 }
 
 const logBuffer = {
@@ -226,6 +237,8 @@ function addToBuffer(level, message) {
 
   const logEntry = `[${timestamp}] [${level}] ${cleanMessage}`;
 
+  writeLogToFile(logEntry);
+
   // Check for duplicates
   const msgHash = createMessageHash(logEntry);
   if (msgHash && recentMessageHashes.has(msgHash)) {
@@ -283,6 +296,29 @@ async function sendEmbed(title, description, color = '#0099ff') {
     originalConsole.error('Failed to send embed to Discord:', err);
   }
 }
+
+function compressLogFile() {
+  const gzip = zlib.createGzip();
+  const input = fs.createReadStream(logFilePath);
+  const output = fs.createWriteStream(`${logFilePath}.gz`);
+
+  input
+    .pipe(gzip)
+    .pipe(output)
+    .on('finish', () => {
+      fs.unlinkSync(logFilePath); // Remove the original log file after compression
+    });
+}
+
+process.on('exit', compressLogFile);
+process.on('SIGINT', () => {
+  compressLogFile();
+  process.exit();
+});
+process.on('SIGTERM', () => {
+  compressLogFile();
+  process.exit();
+});
 
 /**
  * Log an informational message
